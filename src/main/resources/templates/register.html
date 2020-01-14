@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 <form data-th-action="@{/register}" method="post" data-th-object="${user}">
+    <div>
     <label for="username">Username</label>
     <input type="text" data-th-field="*{username}">
-    <label for="password">password</label>
+    <p data-th-if="${#fields.hasErrors('username')}" data-th-errors="*{username}">Error</p>
+    </div>
+    <div>
+    <label for="password">Password</label>
     <input type="password" data-th-field="*{password}">
+    <p data-th-if="${#fields.hasErrors('password')}" data-th-errors="*{password}">Error</p>
+    </div>
+    <div>
+    <label for="email">Email</label>
+    <input type="email" data-th-field="*{email}">
+    <p data-th-if="${#fields.hasErrors('email')}" data-th-errors="*{email}">Error</p>
+    </div>
+    <div>
+    <label for="password">Birthday</label>
+    <input type="date" data-th-field="*{dateOfBirth}">
+    <p data-th-if="${#fields.hasErrors('dateOfBirth')}" data-th-errors="*{dateOfBirth}">Error</p>
+    </div>
     <button type="submit">Register</button>
 </form>
 </body>

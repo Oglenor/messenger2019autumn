@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,8 +30,16 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("user") User user) {
+    public String register(@Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
 
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
+
+        if (userService.userExists(user.getUsername())) {
+            bindingResult.rejectValue("username", "username.exists", "Username is already taken!");
+            return "register";
+        }
         user.addAuthority("ROLE_USER");
         userService.createUser(user);
         return "redirect:/login";

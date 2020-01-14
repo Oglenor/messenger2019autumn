@@ -1,14 +1,11 @@
 package edu.progmatic.messageapp.services;
 
 import edu.progmatic.messageapp.modell.Message;
-import edu.progmatic.messageapp.modell.User;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import sun.plugin.liveconnect.SecurityContextHelper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

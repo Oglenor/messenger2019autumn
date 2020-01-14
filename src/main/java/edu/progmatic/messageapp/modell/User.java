@@ -1,19 +1,40 @@
 package edu.progmatic.messageapp.modell;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.thymeleaf.expression.Lists;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class User implements UserDetails {
+
+    @NotBlank
+    @NotNull
     private String username;
+
+    @NotBlank
+    @NotNull
     private String password;
+
+    @Email
+    @NotNull
+    @NotBlank
     private String email;
+
+    @Past
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+
+
     private Set<GrantedAuthority> authorities = new HashSet<>();
 
     public User() {
