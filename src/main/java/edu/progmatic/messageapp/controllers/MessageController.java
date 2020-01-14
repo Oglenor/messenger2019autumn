@@ -1,44 +1,33 @@
 package edu.progmatic.messageapp.controllers;
 
 import edu.progmatic.messageapp.modell.Message;
+import edu.progmatic.messageapp.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 public class MessageController {
 
-    private InMemoryUserDetailsManager userService;
+    private MessageService messageService;
+
+
 
     @Autowired
-    public MessageController(UserDetailsService userService) {
-        this.userService = (InMemoryUserDetailsManager) userService;
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
     }
 
-    private List<Message> messages = new ArrayList<>();
 
-    {
-        messages.add(new Message("Aladár", "Mz/x jelkezz, jelkezz", LocalDateTime.now().minusDays(10)));
-        messages.add(new Message("Kriszta", "Bemutatom lüke Aladárt", LocalDateTime.now().minusDays(5)));
-        messages.add(new Message("Blöki", "Vauuu", LocalDateTime.now()));
-        messages.add(new Message("Maffia", "miauuu", LocalDateTime.now()));
-        messages.add(new Message("Aladár", "Kapcs/ford", LocalDateTime.now().plusDays(5)));
-        messages.add(new Message("Aladár", "Adj pénzt!", LocalDateTime.now().plusDays(10)));
-    }
+
+
 
     @RequestMapping(value = "/messages", method = RequestMethod.GET)
     public String showMessages(
@@ -50,33 +39,10 @@ public class MessageController {
             @RequestParam(name = "limit", defaultValue = "100", required = false) Integer limit,
             @RequestParam(name = "orderby", defaultValue = "", required = false) String orderBy,
             @RequestParam(name = "order", defaultValue = "asc", required = false) String order,
+            @RequestParam(name = "showDeleted", defaultValue = "false", required = false) boolean showDeleted,
             Model model){
-        Comparator<Message> msgComp = Comparator.comparing((Message::getCreationDate));
-        switch (orderBy){
-            case "text":
-                msgComp = Comparator.comparing((Message::getText));
-                break;
-            case "id":
-                msgComp = Comparator.comparing((Message::getId));
-                break;
-            case "author":
-                msgComp = Comparator.comparing((Message::getAuthor));
-                break;
-            default:
-                break;
-        }
-        if(order.equals("desc")){
-            msgComp = msgComp.reversed();
-        }
 
-        List<Message> msgs = messages.stream()
-                .filter(m -> id == null ? true : m.getId().equals(id))
-                .filter(m -> StringUtils.isEmpty(author) ? true : m.getAuthor().contains(author))
-                .filter(m -> StringUtils.isEmpty(text) ? true : m.getText().contains(text))
-                .filter(m -> from == null ? true : m.getCreationDate().isAfter(from))
-                .filter(m -> to == null ? true : m.getCreationDate().isBefore(to))
-                .sorted(msgComp)
-                .limit(limit).collect(Collectors.toList());
+        List<Message> msgs = messageService.filterMessages(id, author, text, from, to, limit, orderBy, order, showDeleted);
 
         model.addAttribute("msgList", msgs);
         return "messageList";
@@ -86,10 +52,10 @@ public class MessageController {
     public String showOneMessage(
             @PathVariable("id") Long msgId,
             Model model){
-        Optional<Message> message = messages.stream().filter(m -> m.getId().equals(msgId)).findFirst();
-        if(message.isPresent()){
-            model.addAttribute("message", message.get());
-        }
+
+        Message message = messageService.getMessage(msgId);
+
+        model.addAttribute("message", message);
         return "oneMessage";
     }
 
@@ -106,13 +72,17 @@ public class MessageController {
             return "createMessage";
         }
 
-        m.setCreationDate(LocalDateTime.now());
-        m.setId((long) messages.size());
-        messages.add(m);
+        messageService.createMessage(m);
         //return "home";
         //return "redirect:/messages?orderby=createDate&order=desc";
         //return "redirect:/messages?id=" + m.getId();
         return "redirect:/message/" + m.getId();
+    }
+
+    @PostMapping("/messages/delete/{messageId}")
+    public String delete(@PathVariable long messageId) {
+        messageService.deleteMessage(messageId);
+        return "redirect:/messages";
     }
 
 }

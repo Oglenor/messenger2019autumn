@@ -11,14 +11,16 @@ public class Message {
 
     private Long id;
 
-    @Size(max = 500, min = 3 , message = "Not between {2} and {1} characters!")
-    @NotNull
+//    @Size(max = 500, min = 3 , message = "Not between {2} and {1} characters!")
+//    @NotNull
     //@Pattern(regexp ="^[A-Z]\\w* [A-Z]\\w*", message = "Not a valid name!")
     private String author;
 
     @NotNull
     @NotBlank
     private String text;
+
+    private boolean isDeleted;
 
     @DateTimeFormat(pattern = "yyyy/MMMM/dd HH:mm")
     private LocalDateTime creationDate;
@@ -31,6 +33,14 @@ public class Message {
         this.author = author;
         this.text = text;
         this.creationDate = creationDate;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     public Long getId() {

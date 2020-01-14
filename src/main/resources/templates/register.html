@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form data-th-action="@{/register}" method="post" data-th-object="${user}">
+    <label for="username">Username</label>
+    <input type="text" data-th-field="*{username}">
+    <label for="password">password</label>
+    <input type="password" data-th-field="*{password}">
+    <button type="submit">Register</button>
+</form>
+</body>
+</html>

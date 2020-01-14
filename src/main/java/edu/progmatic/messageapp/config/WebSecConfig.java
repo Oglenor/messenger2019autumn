@@ -1,10 +1,12 @@
 package edu.progmatic.messageapp.config;
 
+import edu.progmatic.messageapp.modell.User;
+import edu.progmatic.messageapp.services.UserService;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,17 +15,17 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("user").
-                password("password").roles("USER").build());
-        manager.createUser(User.withUsername("admin").
-                password("password").roles("ADMIN").build());
-        return manager;
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+//
+//        manager.createUser(new User("user", "password", "ROLE_USER"));
+//        manager.createUser(new User("admin", "password", "ROLE_ADMIN"));
+//        return manager;
+//    }
 
     @SuppressWarnings("deprecation")
     @Bean
@@ -43,9 +45,10 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/home")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/home").permitAll()
+                .antMatchers("/home", "/register").permitAll()
                 .antMatchers("/webjars/bootstrap/**", "/webjars/jquery/**", "/webjars/popper.js/**").permitAll()
                 .antMatchers("/statistics").hasRole("ADMIN")
+                .antMatchers("/users", "/user/changeRole").hasRole("ADMIN")
                 .anyRequest().authenticated();
     }
 
