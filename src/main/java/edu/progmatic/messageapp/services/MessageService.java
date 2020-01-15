@@ -1,6 +1,8 @@
 package edu.progmatic.messageapp.services;
 
 import edu.progmatic.messageapp.modell.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @Service
 public class MessageService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
+
     private List<Message> messages = new ArrayList<>();
 
     {
@@ -30,15 +34,21 @@ public class MessageService {
 
     @PostFilter("(hasRole('ADMIN') and #showDeleted == true) or filterObject.deleted == false")
     public List<Message> filterMessages(Long id, String author, String text, LocalDateTime from, LocalDateTime to, Integer limit, String orderBy, String order, boolean showDeleted) {
+        LOGGER.info("filterMessages method started");
+        LOGGER.debug("id: {}, author: {}, text: {}", id, author, text);
         Comparator<Message> msgComp = Comparator.comparing((Message::getCreationDate));
+        LOGGER.debug("filterMessages is going to compare...");
         switch (orderBy) {
             case "text":
+                LOGGER.trace("comparing by text");
                 msgComp = Comparator.comparing((Message::getText));
                 break;
             case "id":
+                LOGGER.trace("comparing by id");
                 msgComp = Comparator.comparing((Message::getId));
                 break;
             case "author":
+                LOGGER.trace("comparing by author");
                 msgComp = Comparator.comparing((Message::getAuthor));
                 break;
             default:
