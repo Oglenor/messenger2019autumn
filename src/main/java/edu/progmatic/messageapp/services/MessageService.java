@@ -7,8 +7,11 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,23 +22,29 @@ import java.util.stream.Collectors;
 @Service
 public class MessageService {
 
+    @PersistenceContext
+    EntityManager em;
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
-    private List<Message> messages = new ArrayList<>();
-
-    {
-        messages.add(new Message("Aladár", "Mz/x jelkezz, jelkezz", LocalDateTime.now().minusDays(10)));
-        messages.add(new Message("Kriszta", "Bemutatom lüke Aladárt", LocalDateTime.now().minusDays(5)));
-        messages.add(new Message("Blöki", "Vauuu", LocalDateTime.now()));
-        messages.add(new Message("Maffia", "miauuu", LocalDateTime.now()));
-        messages.add(new Message("Aladár", "Kapcs/ford", LocalDateTime.now().plusDays(5)));
-        messages.add(new Message("Aladár", "Adj pénzt!", LocalDateTime.now().plusDays(10)));
-    }
+//    private List<Message> messages = new ArrayList<>();
+//
+//    {
+//        messages.add(new Message("Aladár", "Mz/x jelkezz, jelkezz", LocalDateTime.now().minusDays(10)));
+//        messages.add(new Message("Kriszta", "Bemutatom lüke Aladárt", LocalDateTime.now().minusDays(5)));
+//        messages.add(new Message("Blöki", "Vauuu", LocalDateTime.now()));
+//        messages.add(new Message("Maffia", "miauuu", LocalDateTime.now()));
+//        messages.add(new Message("Aladár", "Kapcs/ford", LocalDateTime.now().plusDays(5)));
+//        messages.add(new Message("Aladár", "Adj pénzt!", LocalDateTime.now().plusDays(10)));
+//    }
 
     @PostFilter("(hasRole('ADMIN') and #showDeleted == true) or filterObject.deleted == false")
     public List<Message> filterMessages(Long id, String author, String text, LocalDateTime from, LocalDateTime to, Integer limit, String orderBy, String order, boolean showDeleted) {
         LOGGER.info("filterMessages method started");
         LOGGER.debug("id: {}, author: {}, text: {}", id, author, text);
+
+        List<Message> messages = em.createQuery("SELECT m FROM Message m", Message.class).getResultList();
         Comparator<Message> msgComp = Comparator.comparing((Message::getCreationDate));
         LOGGER.debug("filterMessages is going to compare...");
         switch (orderBy) {
@@ -71,24 +80,27 @@ public class MessageService {
         return msgs;
     }
 
+    @Transactional
     public Message getMessage(Long msgId) {
-        Optional<Message> message = messages.stream().filter(m -> m.getId().equals(msgId)).findFirst();
+        Message message =em.find(Message.class, msgId);
 
-        return message.get();
+        return message;
     }
 
+    @Transactional
     public void createMessage(Message m) {
         String loggedInUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         m.setAuthor(loggedInUserName);
         m.setCreationDate(LocalDateTime.now());
-        m.setId((long) messages.size());
-        messages.add(m);
+//        m.setId((long) messages.size());
+        em.persist(m);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public void deleteMessage(long messageId) {
 
-        Message message = getMessage(messageId);
+        Message message = em.find(Message.class, messageId);
         message.setDeleted(true);
     }
 }
