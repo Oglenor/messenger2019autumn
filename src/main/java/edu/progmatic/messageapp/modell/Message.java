@@ -24,6 +24,9 @@ public class Message {
 
     private boolean isDeleted;
 
+    @ManyToOne
+    private Topic topic;
+
     @DateTimeFormat(pattern = "yyyy/MMMM/dd HH:mm")
     private LocalDateTime creationDate;
 
@@ -74,5 +77,13 @@ public class Message {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 }
