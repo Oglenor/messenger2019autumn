@@ -2,6 +2,7 @@ package edu.progmatic.messageapp.controllers;
 
 import edu.progmatic.messageapp.modell.Message;
 import edu.progmatic.messageapp.services.MessageService;
+import edu.progmatic.messageapp.services.TopicService;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -33,13 +34,14 @@ public class MessageControllerTest {
     @Test
     public void showMessages() throws Exception {
         MessageService ms = Mockito.mock(MessageService.class);
+        TopicService ts = Mockito.mock(TopicService.class);
         List<Message> msgList = new ArrayList<>();
         msgList.add(new Message("Aladár", "Kapcs-ford", LocalDateTime.now()));
         Mockito.when(ms.filterMessages(Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(),
                 Mockito.any(),Mockito.any(),Mockito.any(), Mockito.anyBoolean()))
                 .thenReturn(msgList);
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new MessageController(ms))
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new MessageController(ms, ts))
                 .build();
         mockMvc.perform(MockMvcRequestBuilders.get("/messages"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("msgList"))

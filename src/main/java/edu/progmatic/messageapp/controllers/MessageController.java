@@ -1,7 +1,9 @@
 package edu.progmatic.messageapp.controllers;
 
 import edu.progmatic.messageapp.modell.Message;
+import edu.progmatic.messageapp.modell.Topic;
 import edu.progmatic.messageapp.services.MessageService;
+import edu.progmatic.messageapp.services.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -17,17 +19,13 @@ import java.util.List;
 public class MessageController {
 
     private MessageService messageService;
-
-
+    private TopicService topicService;
 
     @Autowired
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, TopicService topicService) {
         this.messageService = messageService;
+        this.topicService = topicService;
     }
-
-
-
-
 
     @RequestMapping(value = "/messages", method = RequestMethod.GET)
     public String showMessages(
@@ -63,16 +61,22 @@ public class MessageController {
     public String showCreateMessage(Model model) {
         Message m = new Message();
         model.addAttribute("message", m);
+
+        model.addAttribute("topics", topicService.getAllTopics());
+
         return "createMessage";
     }
 
     @PostMapping(path = "/createmessage")
-    public String createMessage(@Valid @ModelAttribute("message") Message m, BindingResult bindingResult) {
+    public String createMessage(@Valid @ModelAttribute("message") Message m, Model model, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("topics", topicService.getAllTopics());
             return "createMessage";
         }
 
-        messageService.createMessage(m);
+        Topic t = topicService.getTopicByTitle(m.getTopic().getTitle());
+        messageService.createMessage(m, t);
+
         //return "home";
         //return "redirect:/messages?orderby=createDate&order=desc";
         //return "redirect:/messages?id=" + m.getId();

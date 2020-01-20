@@ -18,7 +18,7 @@ public class Topic {
 
     private String author;
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(cascade=CascadeType.REMOVE, mappedBy = "topic")
     private List<Message> messages;
 
     public Topic() {

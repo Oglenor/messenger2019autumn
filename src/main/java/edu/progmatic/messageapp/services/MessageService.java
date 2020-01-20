@@ -1,6 +1,7 @@
 package edu.progmatic.messageapp.services;
 
 import edu.progmatic.messageapp.modell.Message;
+import edu.progmatic.messageapp.modell.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostFilter;
@@ -88,11 +89,13 @@ public class MessageService {
     }
 
     @Transactional
-    public void createMessage(Message m) {
+    public void createMessage(Message m, Topic topic) {
         String loggedInUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         m.setAuthor(loggedInUserName);
         m.setCreationDate(LocalDateTime.now());
 //        m.setId((long) messages.size());
+
+        m.setTopic(topic);
         em.persist(m);
     }
 

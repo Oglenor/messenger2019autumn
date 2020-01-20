@@ -19,6 +19,16 @@
             <div class="invalid-feedback" data-th-if="${#fields.hasErrors('text')}" data-th-errors="*{text}">Name Error</div>
 
         </div>
+        <div>
+            <label data-th-for="topic">Topic:</label>
+            <select data-th-field="*{topic.title}">
+                <option data-th-each="topic : ${topics}" data-th-value="${topic.title}" data-th-text="${topic.title}">Topic</option>
+            </select>
+        </div>
+        <div>
+            <a data-th-href="@{/createtopic}">Create topic</a>
+        </div>
+
         <button type="submit" class="btn btn-primary">Beküld</button>
     </form>
 </div>
