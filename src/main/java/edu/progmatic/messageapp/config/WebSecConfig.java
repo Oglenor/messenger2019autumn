@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -36,7 +37,8 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/messages", true)
                 .and()
                 .logout()
-                .logoutSuccessUrl("/home")
+                .logoutSuccessUrl("/login")
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
                 .and()
                 .authorizeRequests()
                 .antMatchers("/home", "/register").permitAll()

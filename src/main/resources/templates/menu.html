@@ -26,6 +26,14 @@
             <a class="nav-link" href="/createtopic">New topic</a>
         </li>
     </ul>
+    <div class="ml-auto">
+                <span data-sec-authorize="isAuthenticated()" class="text-light">
+                    <span >Üdv </span><span data-sec-authentication="name"></span><span >!</span>
+                </span>
+
+        <a  data-sec-authorize="isAuthenticated()" class="" href="/logout">Kijelentkezés</a>
+        <a  data-sec-authorize="! isAuthenticated()" class="" href="/login">Bejelentkezés</a>
+    </div>
 </nav>
 
 </body>
