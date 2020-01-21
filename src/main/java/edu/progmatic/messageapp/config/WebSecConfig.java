@@ -23,7 +23,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 
     @SuppressWarnings("deprecation")
     @Bean
-    public static PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
 
