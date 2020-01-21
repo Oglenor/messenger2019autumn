@@ -1,35 +1,30 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-</head>
-
+<head data-th-replace="menu :: msghead"></head>
 <body>
+<nav data-th-replace="menu :: msgmenu"></nav>
 
 <div class="container">
-
+    <h1>Új üzenet</h1>
     <form data-th-action="@{/createmessage}" method="POST" data-th-object="${message}">
 
         <div class="form-group">
             <label for="text">Üzenet szövege</label>
-            <textarea data-th-field="*{text}"  data-th-errorclass="is-invalid" class="form-control" placeholder="Üzenet"></textarea>
+            <textarea data-th-field="*{text}" id="text" data-th-errorclass="is-invalid" class="form-control" placeholder="Üzenet"></textarea>
             <div class="invalid-feedback" data-th-if="${#fields.hasErrors('text')}" data-th-errors="*{text}">Name Error</div>
 
         </div>
-        <div>
+        <div class="form-group">
             <label data-th-for="topic">Topic:</label>
-            <select data-th-field="*{topic.title}">
+            <select data-th-field="*{topic.title}" class="form-control">
                 <option data-th-each="topic : ${topics}" data-th-value="${topic.title}" data-th-text="${topic.title}">Topic</option>
             </select>
         </div>
-        <div>
-            <a data-th-href="@{/createtopic}">Create topic</a>
-        </div>
+
 
         <button type="submit" class="btn btn-primary">Beküld</button>
+        <div class="mt-4">
+            <a data-th-href="@{/createtopic}">Create topic</a>
+        </div>
     </form>
 </div>
 </body>
