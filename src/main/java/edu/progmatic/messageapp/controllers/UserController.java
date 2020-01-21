@@ -40,7 +40,6 @@ public class UserController {
             bindingResult.rejectValue("username", "username.exists", "Username is already taken!");
             return "register";
         }
-        user.addAuthority("ROLE_USER");
         userService.createUser(user);
         return "redirect:/login";
     }
@@ -54,8 +53,7 @@ public class UserController {
     @PostMapping("/user/changeRole")
     public String changeUserRole(@RequestParam String username, @RequestParam String role) {
 
-        User user = (User) userService.loadUserByUsername(username);
-        user.setAuthorities(role);
+        userService.updateAuthority(role);
 
         return "redirect:/users";
     }

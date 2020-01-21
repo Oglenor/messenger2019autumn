@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.thymeleaf.expression.Lists;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,7 +15,12 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Entity
 public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @NotBlank
     @NotNull
@@ -35,15 +41,30 @@ public class User implements UserDetails {
     private LocalDate dateOfBirth;
 
 
-    private Set<GrantedAuthority> authorities = new HashSet<>();
+    @ManyToMany
+    private Set<Authority> authorities = new HashSet<>();
 
     public User() {
     }
 
-    public User(String username, String password, String... authorities) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.authorities.addAll(Arrays.stream(authorities).map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+    }
+
+    public User(String username, String password, String email, LocalDate dateOfBirth) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setUsername(String username) {
@@ -70,7 +91,7 @@ public class User implements UserDetails {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public void setAuthorities(Set<GrantedAuthority> authorities) {
+    public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
 
@@ -109,12 +130,8 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void addAuthority(String authority) {
-        authorities.add(new SimpleGrantedAuthority(authority));
+    public void addAuthority(Authority authority) {
+        authorities.add(authority);
     }
 
-    public void setAuthorities(String... authoritites) {
-        authorities.clear();
-        authorities.addAll(Arrays.stream(authoritites).map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-    }
 }
