@@ -1,51 +1,52 @@
 package edu.progmatic.messageapp.services;
 
-import edu.progmatic.messageapp.modell.Message;
 import edu.progmatic.messageapp.modell.Topic;
 import edu.progmatic.messageapp.modell.User;
+import edu.progmatic.messageapp.repositories.TopicRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
 public class TopicService {
 
-    @PersistenceContext
-    private EntityManager em;
+    private final TopicRepository topicRepository;
+
+    @Autowired
+    public TopicService(TopicRepository topicRepository) {
+        this.topicRepository = topicRepository;
+    }
 
     @Transactional
     public void createTopic(Topic topic) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         topic.setAuthor(currentUser.getUsername());
-        em.persist(topic);
+        topicRepository.save(topic);
     }
 
     public List<Topic> getAllTopics() {
-        List<Topic> topics =
-                em.createQuery("SELECT t FROM Topic t", Topic.class).getResultList();
-        return topics;
+        return topicRepository.findAll();
     }
 
     public Topic getTopicByIdWithMessages(long topicId) {
-        return em.find(Topic.class, topicId);
+        Topic t = topicRepository.findByIdWithMessages(topicId);
+        return t;
     }
 
     public Topic getTopicByTitle(String title) {
-        Topic topic =
-                em.createQuery("SELECT t FROM Topic t WHERE t.title = :title", Topic.class)
-                .setParameter("title", title).getSingleResult();
+        Topic topic = topicRepository.findByTitle(title);
+
         return topic;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public void delteTopic(long topicId) {
-        em.remove(em.find(Topic.class, topicId));
+    public void deleteTopic(long topicId) {
+        topicRepository.deleteById(topicId);
     }
 }

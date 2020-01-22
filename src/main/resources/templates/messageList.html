@@ -90,6 +90,7 @@
         <tr>
             <td>Szerző</td>
             <td>Szöveg</td>
+            <td>Topic</td>
             <td>Dátum</td>
             <td data-sec-authorize="hasRole('ADMIN')">Deleted</td>
             <td></td>
@@ -99,6 +100,7 @@
         <tr data-th-each="msg: ${msgList}">
             <td data-th-text="${msg.author}"></td>
             <td data-th-text="${msg.text}"></td>
+            <td data-th-text="${msg.topic.title}"></td>
             <td data-th-text="${{msg.creationDate}}"></td>
             <td data-sec-authorize="hasRole('ADMIN')" data-th-text="${msg.deleted}"></td>
             <td><a data-th-href="@{/message/{id}(id=${msg.id})}">Részletek</a></td>

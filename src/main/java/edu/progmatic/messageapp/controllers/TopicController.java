@@ -59,7 +59,7 @@ public class TopicController {
     @PostMapping("topics/delete/{topicId}")
     public String createTopic(@PathVariable("topicId") long topicId) {
 
-        topicService.delteTopic(topicId);
+        topicService.deleteTopic(topicId);
         return "redirect:/topics";
     }
 
