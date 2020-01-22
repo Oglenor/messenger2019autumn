@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Message {
@@ -29,6 +30,12 @@ public class Message {
 
     @DateTimeFormat(pattern = "yyyy/MMMM/dd HH:mm")
     private LocalDateTime creationDate;
+
+    @ManyToOne
+    private Message parent;
+
+    @OneToMany(mappedBy = "parent")
+    private List<Message> comments;
 
     public Message() {
     }
@@ -85,5 +92,21 @@ public class Message {
 
     public void setTopic(Topic topic) {
         this.topic = topic;
+    }
+
+    public Message getParent() {
+        return parent;
+    }
+
+    public void setParent(Message parent) {
+        this.parent = parent;
+    }
+
+    public List<Message> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Message> comments) {
+        this.comments = comments;
     }
 }

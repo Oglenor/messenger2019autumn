@@ -2,6 +2,7 @@ package edu.progmatic.messageapp.services;
 
 import edu.progmatic.messageapp.modell.Message;
 import edu.progmatic.messageapp.modell.Topic;
+import edu.progmatic.messageapp.modell.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostFilter;
@@ -105,5 +106,18 @@ public class MessageService {
 
         Message message = em.find(Message.class, messageId);
         message.setDeleted(true);
+    }
+
+    @Transactional
+    public void addNewComment(long parentMessageId, Message comment) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Message parentMessage = getMessage(parentMessageId);
+        comment.setAuthor(user.getUsername());
+        comment.setParent(parentMessage);
+        comment.setTopic(parentMessage.getTopic());
+        comment.setCreationDate(LocalDateTime.now());
+
+        em.persist(comment);
     }
 }

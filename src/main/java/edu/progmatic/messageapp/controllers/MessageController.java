@@ -89,4 +89,18 @@ public class MessageController {
         return "redirect:/messages";
     }
 
+
+    @RequestMapping(value = "/messages/{messageId}/newcomment", method = RequestMethod.POST)
+    public String newComment(@PathVariable("messageId") long messageId, @Valid @ModelAttribute("comment") Message comment, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            Message message = messageService.getMessage(messageId);
+            model.addAttribute("message", message);
+            return "oneMessage";
+        }
+
+        messageService.addNewComment(messageId, comment);
+
+        return "redirect:/message/" + messageId;
+    }
 }
