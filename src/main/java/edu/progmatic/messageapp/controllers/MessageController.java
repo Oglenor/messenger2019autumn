@@ -1,5 +1,6 @@
 package edu.progmatic.messageapp.controllers;
 
+import edu.progmatic.messageapp.dto.MessageDto;
 import edu.progmatic.messageapp.modell.Message;
 import edu.progmatic.messageapp.modell.Topic;
 import edu.progmatic.messageapp.services.MessageService;
@@ -59,7 +60,7 @@ public class MessageController {
 
     @GetMapping(path = "/showcreate")
     public String showCreateMessage(Model model) {
-        Message m = new Message();
+        MessageDto m = new MessageDto();
         model.addAttribute("message", m);
 
         model.addAttribute("topics", topicService.getAllTopics());
@@ -68,19 +69,18 @@ public class MessageController {
     }
 
     @PostMapping(path = "/createmessage")
-    public String createMessage(@Valid @ModelAttribute("message") Message m, Model model, BindingResult bindingResult) {
+    public String createMessage(@Valid @ModelAttribute("message") MessageDto m, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("topics", topicService.getAllTopics());
             return "createMessage";
         }
 
-        Topic t = topicService.getTopicByTitle(m.getTopic().getTitle());
-        messageService.createMessage(m, t);
+        Message newMessage = messageService.createMessage(m);
 
         //return "home";
         //return "redirect:/messages?orderby=createDate&order=desc";
         //return "redirect:/messages?id=" + m.getId();
-        return "redirect:/message/" + m.getId();
+        return "redirect:/message/" + newMessage.getId();
     }
 
     @PostMapping("/messages/delete/{messageId}")

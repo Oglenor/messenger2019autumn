@@ -9,7 +9,7 @@
 
         <div class="form-group">
             <label for="title">Title</label>
-            <textarea id="title" data-th-field="*{title}"  data-th-errorclass="is-invalid" class="form-control" placeholder="Enter title"></textarea>
+            <textarea id="title" data-th-field="*{title}" data-th-errorclass="is-invalid" class="form-control" placeholder="Enter title"></textarea>
             <div class="invalid-feedback" data-th-if="${#fields.hasErrors('title')}" data-th-errors="*{title}">Title Error</div>
 
         </div>
