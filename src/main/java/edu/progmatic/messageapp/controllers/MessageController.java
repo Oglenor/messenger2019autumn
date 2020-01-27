@@ -86,6 +86,11 @@ public class MessageController {
         return "redirect:/messages";
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, path = "/messages/delete/{messageId}")
+    public @ResponseBody Boolean restDelete(@PathVariable long messageId) {
+        return messageService.deleteMessage(messageId);
+    }
+
 
     @RequestMapping(value = "/messages/{messageId}/newcomment", method = RequestMethod.POST)
     public String newComment(@PathVariable("messageId") long messageId, @Valid @ModelAttribute("comment") Message comment, BindingResult bindingResult, Model model) {

@@ -85,6 +85,7 @@
     </div>
 
 
+
     <table class="table">
         <thead>
         <tr>
@@ -97,19 +98,39 @@
             <td data-sec-authorize="hasRole('ADMIN')"></td>
         </tr>
         </thead>
+        <tbody id="msgtbody">
         <tr data-th-each="msg: ${msgList}">
+            <td style="display: none" class="msgId" data-th-text="${msg.id}"></td>
             <td data-th-text="${msg.author}"></td>
             <td data-th-text="${msg.text}"></td>
             <td data-th-text="${msg.topic.title}"></td>
             <td data-th-text="${{msg.creationDate}}"></td>
             <td data-sec-authorize="hasRole('ADMIN')" data-th-text="${msg.deleted}"></td>
             <td><a data-th-href="@{/message/{id}(id=${msg.id})}">Részletek</a></td>
-            <td data-sec-authorize="hasRole('ADMIN')"><form method="post" data-th-action="@{/messages/delete/{id}(id=${msg.id})}">
-                <button type="submit">Delete</button>
-            </form> </td>
-        </tr>
-    </table>
+            <td data-sec-authorize="hasRole('ADMIN')">
+                <button class="btn btn-primary deleteButton" type="submit" >Delete</button>
+            </td>
 
+        </tr>
+        </tbody>
+    </table>
+    <form style="display: none" method="post" data-th-action="@{/messages/delete/0}">
+        <button type="submit">Delete</button>
+    </form>
+    <script>
+        $('.deleteButton').click(function(event){
+            let id = event.target.closest('tr').querySelector('.msgId').innerText;
+            $.ajax('messages/delete/'+id, {
+                method: "DELETE",
+                beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("input[name='_csrf']")[0].value);},
+                success: function(){
+                    let selector = ".msgId:contains('" + id + "')";
+                    $('#msgtbody tr').has(selector).fadeOut(3000);
+                }
+            })
+        })
+
+    </script>
 </div>
 </body>
 </html>

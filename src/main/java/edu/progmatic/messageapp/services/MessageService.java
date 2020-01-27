@@ -106,11 +106,17 @@ public class MessageService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public void deleteMessage(long messageId) {
+    public Boolean deleteMessage(long messageId) {
 
         Message message = em.find(Message.class, messageId);
-        message.setDeleted(true);
+        if(message != null && message.getComments().isEmpty()) {
+            message.setDeleted(true);
+            return true;
+        }
+        return false;
     }
+
+
 
     @Transactional
     public void addNewComment(long parentMessageId, Message comment) {
