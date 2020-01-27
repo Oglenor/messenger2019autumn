@@ -123,9 +123,12 @@
             $.ajax('messages/delete/'+id, {
                 method: "DELETE",
                 beforeSend: function(xhr){xhr.setRequestHeader('X-CSRF-TOKEN', $("input[name='_csrf']")[0].value);},
-                success: function(){
+                success: function(data){
                     let selector = ".msgId:contains('" + id + "')";
                     $('#msgtbody tr').has(selector).fadeOut(3000);
+                },
+                error: function(err){
+                    alert(err.responseJSON.message)
                 }
             })
         })

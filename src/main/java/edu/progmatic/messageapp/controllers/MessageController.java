@@ -2,7 +2,6 @@ package edu.progmatic.messageapp.controllers;
 
 import edu.progmatic.messageapp.dto.MessageDto;
 import edu.progmatic.messageapp.modell.Message;
-import edu.progmatic.messageapp.modell.Topic;
 import edu.progmatic.messageapp.services.MessageService;
 import edu.progmatic.messageapp.services.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,10 +86,10 @@ public class MessageController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/messages/delete/{messageId}")
-    public @ResponseBody Boolean restDelete(@PathVariable long messageId) {
-        return messageService.deleteMessage(messageId);
+    public @ResponseBody String restDelete(@PathVariable long messageId) {
+        messageService.deleteMessage(messageId);
+        return "ok";
     }
-
 
     @RequestMapping(value = "/messages/{messageId}/newcomment", method = RequestMethod.POST)
     public String newComment(@PathVariable("messageId") long messageId, @Valid @ModelAttribute("comment") Message comment, BindingResult bindingResult, Model model) {

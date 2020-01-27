@@ -1,6 +1,8 @@
 package edu.progmatic.messageapp.services;
 
 import edu.progmatic.messageapp.dto.MessageDto;
+import edu.progmatic.messageapp.exceptions.MessageHasComments;
+import edu.progmatic.messageapp.exceptions.MessageNotFoundException;
 import edu.progmatic.messageapp.modell.Message;
 import edu.progmatic.messageapp.modell.Topic;
 import edu.progmatic.messageapp.modell.User;
@@ -106,14 +108,16 @@ public class MessageService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Boolean deleteMessage(long messageId) {
+    public void deleteMessage(long messageId) {
 
         Message message = em.find(Message.class, messageId);
-        if(message != null && message.getComments().isEmpty()) {
-            message.setDeleted(true);
-            return true;
+        if(message == null){
+            throw new MessageNotFoundException();
         }
-        return false;
+        if(!message.getComments().isEmpty()){
+            throw new MessageHasComments();
+        }
+        message.setDeleted(true);
     }
 
 
