@@ -15,8 +15,8 @@
         </div>
         <div class="form-group">
             <label data-th-for="topic">Topic:</label>
-            <select data-th-field="*{topicName}" class="form-control">
-                <option data-th-each="topic : ${topics}" data-th-value="${topic.title}" data-th-text="${topic.title}">Topic</option>
+            <select data-th-field="*{topicId}" class="form-control">
+                <option data-th-each="topic : ${topics}" data-th-value="${topic.id}" data-th-text="${topic.title}">Topic</option>
             </select>
         </div>
 

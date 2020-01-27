@@ -1,5 +1,6 @@
 package edu.progmatic.messageapp.services;
 
+import edu.progmatic.messageapp.dto.MessageDto;
 import edu.progmatic.messageapp.modell.Message;
 import edu.progmatic.messageapp.modell.Topic;
 import edu.progmatic.messageapp.modell.User;
@@ -90,14 +91,17 @@ public class MessageService {
     }
 
     @Transactional
-    public void createMessage(Message m, Topic topic) {
+    public Message createMessage(MessageDto mdto) {
         String loggedInUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Message m = new Message();
+        Topic t = new Topic();
+        t.setId(mdto.getTopicId());
+        m.setText(mdto.getText());
         m.setAuthor(loggedInUserName);
         m.setCreationDate(LocalDateTime.now());
-//        m.setId((long) messages.size());
-
-        m.setTopic(topic);
+        m.setTopic(t);
         em.persist(m);
+        return m;
     }
 
     @PreAuthorize("hasRole('ADMIN')")

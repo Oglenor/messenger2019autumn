@@ -77,9 +77,6 @@ public class MessageController {
 
         Message newMessage = messageService.createMessage(m);
 
-        //return "home";
-        //return "redirect:/messages?orderby=createDate&order=desc";
-        //return "redirect:/messages?id=" + m.getId();
         return "redirect:/message/" + newMessage.getId();
     }
 

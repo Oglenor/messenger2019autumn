@@ -9,9 +9,8 @@ public class MessageDto {
     @NotNull
     private String text;
 
-    @NotBlank
     @NotNull
-    private String topicName;
+    private Long topicId;
 
 
     public MessageDto() {
@@ -25,11 +24,11 @@ public class MessageDto {
         this.text = text;
     }
 
-    public String getTopicName() {
-        return topicName;
+    public Long getTopicId() {
+        return topicId;
     }
 
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
+    public void setTopicId(Long topicId) {
+        this.topicId = topicId;
     }
 }
